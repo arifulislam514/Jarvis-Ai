@@ -2,21 +2,52 @@ import cohere
 from rich import print
 from dotenv import dotenv_values
 
-
+# Load env variables
 env_vars = dotenv_values(".env")
 api_key = env_vars.get("CO_API_KEY")
 
+if not api_key:
+    raise ValueError("❌ No API key found. Make sure .env has CO_API_KEY=your_key")
+
+# Initialize Cohere client
 co = cohere.Client(api_key=api_key)
 
 
 
 funcs_more = [
-    "exit", "general", "realtime", "open", "close", "play", "generate image", "system", "content", "google search", "youtube search", "wikipedia search", "news search", "weather", "joke", "quote", "fact", "advice", "horoscope", "trivia", "maths", "translate", "define", "synonym", "antonym", "spell check", "grammar check", "summarize", "paraphrase", "analyze sentiment", "classify text", "extract keywords", "extract entities", "convert text to speech", "convert speech to text", "set reminder", "set alarm", "create event", "send email", "send message", "make call", "search web", "browse website", "open app", "close app", "lock screen", "shutdown", "restart", "sleep", "hibernate", "log out", "take screenshot", "record screen", "open file", "close file", "read file", "write file", "delete file", "move file", "copy file", "rename file", "compress file", "decompress file", "upload file", "download file", "list files", "search files", "create folder", "delete folder", "move folder", "copy folder", "rename folder", "list folders", "search folders", "get system info", "get network info", "get battery status", "get cpu usage", "get memory usage", "get disk usage", "get running processes", "kill process", "start process", "stop process", "restart process", "update software", "install software", "uninstall software", "check for updates", "backup data", "restore data", "clean up disk", "defragment disk", "optimize system", "monitor system", "manage users", "manage permissions", "manage services", "manage startup programs", "manage scheduled tasks", "manage firewall", "manage antivirus", "manage updates", "manage backups", "manage network", "manage bluetooth", "manage printers", "manage displays", "manage audio", "manage power settings", "manage accessibility", "manage privacy settings", "manage security settings", "manage notifications", "manage location settings", "manage accounts", "manage sync settings", "manage storage settings", "manage app settings", "manage system settings", "get help", "get support", "get documentation", "get tutorials", "get examples", "get tips", "get tricks", "get best practices", "get troubleshooting steps", "get faq", "get community support", "get professional support", "get feedback", "report bug", "request feature", "suggest improvement"
+    "exit", "general", "realtime", "open", "close", "play", "generate image", "system", "content",
+    "google search", "youtube search", "wikipedia search", "news search", "weather", "joke",
+    "quote", "fact", "advice", "horoscope", "trivia", "maths", "translate", "define", "synonym",
+    "antonym", "spell check", "grammar check", "summarize", "paraphrase", "analyze sentiment",
+    "classify text", "extract keywords", "extract entities", "convert text to speech",
+    "convert speech to text", "set reminder", "set alarm", "create event", "send email",
+    "send message", "make call", "search web", "browse website", "open app", "close app",
+    "lock screen", "shutdown", "restart", "sleep", "hibernate", "log out", "take screenshot",
+    "record screen", "open file", "close file", "read file", "write file", "delete file",
+    "move file", "copy file", "rename file", "compress file", "decompress file", "upload file",
+    "download file", "list files", "search files", "create folder", "delete folder", "move folder",
+    "copy folder", "rename folder", "list folders", "search folders", "get system info",
+    "get network info", "get battery status", "get cpu usage", "get memory usage", "get disk usage",
+    "get running processes", "kill process", "start process", "stop process", "restart process",
+    "update software", "install software", "uninstall software", "check for updates", "backup data",
+    "restore data", "clean up disk", "defragment disk", "optimize system", "monitor system",
+    "manage users", "manage permissions", "manage services", "manage startup programs",
+    "manage scheduled tasks", "manage firewall", "manage antivirus", "manage updates",
+    "manage backups", "manage network", "manage bluetooth", "manage printers", "manage displays",
+    "manage audio", "manage power settings", "manage accessibility", "manage privacy settings",
+    "manage security settings", "manage notifications", "manage location settings",
+    "manage accounts", "manage sync settings", "manage storage settings", "manage app settings",
+    "manage system settings", "get help", "get support", "get documentation", "get tutorials",
+    "get examples", "get tips", "get tricks", "get best practices", "get troubleshooting steps",
+    "get faq", "get community support", "get professional support", "get feedback", "report bug",
+    "request feature", "suggest improvement"
 ]
 
 funcs = [
-    "exit", "general", "realtime", "open", "close", "play", "generate image", "system", "content", "google search", "youtube search", "reminder"
+    "exit", "general", "realtime", "open", "close", "play", "generate image",
+    "system", "content", "google search", "youtube search", "reminder"
 ]
+
 messages = []
 
 
@@ -49,58 +80,73 @@ ChatHistory = [
     {"role": "Chatbot", "message": "open edge, general tell me about banladesh."},
     {"role": "User", "message": "open edge open youtube"},
     {"role": "Chatbot", "message": "open edge, open youtube"},
-    {"role": "User", "message": "what is today's date and by the way remind me that i have a programing contest on 20th october 11:00am."},
-    {"role": "Chatbot", "message": "general what is today's date, reminder 11:00am 20th october programing contest."},
+    {"role": "User", "message": "what is today's date and by the way remind me that i have a programing contest on 20th september 11:00am."},
+    {"role": "Chatbot", "message": "general what is today's date, reminder 11:00am 20th september programing contest."},
     {"role": "User", "message": "chat with me."},
     {"role": "Chatbot", "message": "general chat with me."},
 ]
 
 
+# Pick latest available model
+PREFERRED_MODEL = "command-a-03-2025"
+FALLBACK_MODELS = ["command", "command-light"]
+
+
 def FirstLayerDMM(prompt: str = "test"):
     messages.append({"role": "user", "content": f"{prompt}"})
-    
-    stream = co.chat_stream(
-        model='cohere.command-a-03-2025',
-        message=prompt,
-        temperature=0.7,
-        chat_history=ChatHistory,
-        prompt_truncation='OFF',
-        connectors=[],
-        preamble=preamble,
-    )
-    
+
+    try:
+        stream = co.chat_stream(
+            model=PREFERRED_MODEL,
+            message=prompt,
+            temperature=0.7,
+            chat_history=ChatHistory,
+            prompt_truncation='OFF',
+            connectors=[],
+            preamble=preamble,
+        )
+    except cohere.errors.NotFoundError:
+        print(f"[yellow] Model {PREFERRED_MODEL} not found, trying fallback...[/yellow]")
+        for fallback in FALLBACK_MODELS:
+            try:
+                stream = co.chat_stream(
+                    model=fallback,
+                    message=prompt,
+                    temperature=0.7,
+                    chat_history=ChatHistory,
+                    prompt_truncation='OFF',
+                    connectors=[],
+                    preamble=preamble,
+                )
+                break
+            except cohere.errors.NotFoundError:
+                continue
+        else:
+            raise RuntimeError("No valid Cohere model available!")
+
     response = ""
-    
     for event in stream:
         if event.event_type == "text-generation":
             response += event.text
-            
+
     response = response.replace("\n", "")
     response = response.split(",")
-    
-    
     response = [i.strip() for i in response]
-    
-    
+
     temp = []
-    
-    
     for task in response:
         for func in funcs:
             if task.startswith(func):
                 temp.append(task)
-                
-                
+
     response = temp
-    
-    
+
     if "(query)" in response:
         newresponse = FirstLayerDMM(prompt=prompt)
         return newresponse
     else:
-        return response
-    
+        return response    
     
 if __name__ == "__main__":
     while True:
-        print(FirstLayerDMM(input(">>>")))
+        print(FirstLayerDMM(input(">>> ")))
