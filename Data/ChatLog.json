@@ -94,5 +94,157 @@
     {
         "role": "assistant",
         "content": "I'm glad I could provide helpful information and assist you effectively."
+    },
+    {
+        "role": "user",
+        "content": "what is usd to bdt price"
+    },
+    {
+        "role": "assistant",
+        "content": "The current USD to BDT exchange rate is approximately 1 USD = 105-106 BDT."
+    },
+    {
+        "role": "user",
+        "content": "hello"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, is there anything else I can help you with?"
+    },
+    {
+        "role": "user",
+        "content": "what is the usd exchange rate"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have the most up-to-date information on the current USD exchange rate, as the search results for 'what is the usd exchange rate' are empty. However, I can suggest checking a reliable currency exchange website or service for the latest rates."
+    },
+    {
+        "role": "user",
+        "content": "hi"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, how can I assist you today?"
+    },
+    {
+        "role": "user",
+        "content": "hi"
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, is there something I can help you with or would you like to chat?"
+    },
+    {
+        "role": "user",
+        "content": "tell me usd price"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have the current USD price as the search results for 'tell me usd price' are empty. I recommend checking a reliable currency exchange website or service for the latest exchange rates."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple."
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'what is the stock price of apple' are empty. Unfortunately, I don't have the current stock price of Apple. For the most up-to-date and accurate information, I recommend checking a reliable financial website or service."
+    },
+    {
+        "role": "user",
+        "content": "what is stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, the search results for 'what is stock price of apple' are empty, and I don't have the current stock price of Apple. I recommend checking a reliable financial website or service, such as Bloomberg or Yahoo Finance, for the most up-to-date information on Apple's stock price."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'what is the stock price of apple' are empty, and I don't have the current stock price of Apple. For the most accurate and up-to-date information, I suggest checking a reliable financial website or service. As of my knowledge cutoff, I don't have real-time access to current market data."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "Unfortunately, I don't have the current stock price of Apple, as the search results for 'what is the stock price of apple' are empty. I recommend checking a reliable financial website or service for the most up-to-date information on Apple's stock price."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'what is the stock price of apple' are empty. I don't have the current stock price of Apple. For the most accurate and up-to-date information, I suggest checking a reliable financial website or service, such as Bloomberg or Yahoo Finance."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have the current stock price of Apple, as my training data does not include real-time market information. I recommend checking a reliable financial website or service, such as Bloomberg, Yahoo Finance, or Apple's official investor relations website, for the most up-to-date and accurate information on Apple's stock price."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have access to real-time market data, so I'm unable to provide the current stock price of Apple. For the most accurate and up-to-date information, I recommend checking a reliable financial website or service, such as:\n\n* Bloomberg\n* Yahoo Finance\n* Apple's official investor relations website\n* NASDAQ or NYSE websites\n\nThese sources will provide you with the current stock price and other relevant information about Apple's stock performance."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of apple"
+    },
+    {
+        "role": "assistant",
+        "content": "I don't have the current stock price of Apple. Please check a reliable financial website or service for the most up-to-date information."
+    },
+    {
+        "role": "user",
+        "content": "what's time now"
+    },
+    {
+        "role": "assistant",
+        "content": "The current time is 02 hours, 42 minutes, 23 seconds, on Thursday, October 2, 2025."
+    },
+    {
+        "role": "user",
+        "content": "what is the stock price of iphone"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'what is the stock price of iphone' are empty. Unfortunately, I don't have the current stock price of iPhone, as iPhone is a product of Apple and not a stock itself. If you're looking for the stock price of Apple, I recommend checking a reliable financial website or service for the most up-to-date information."
+    },
+    {
+        "role": "user",
+        "content": "who is mark"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'who is mark' are empty. Unfortunately, I don't have enough information to provide an accurate answer about who Mark is. Could you please provide more context or clarify which Mark you are referring to?"
+    },
+    {
+        "role": "user",
+        "content": "who is elon mask"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'who is elon mask' are empty. However, I can tell you that Elon Musk is a business magnate and entrepreneur, known for founding companies like SpaceX, Tesla, and Neuralink. He is a well-known figure in the tech and business world, and has been instrumental in advancing technologies like electric cars, space exploration, and renewable energy."
+    },
+    {
+        "role": "user",
+        "content": "what is netwroth of elon mask"
+    },
+    {
+        "role": "assistant",
+        "content": "The search results for 'what is networth of elon mask' are empty. Unfortunately, I don't have the current net worth of Elon Musk. However, I can suggest checking a reliable financial website or service, such as Forbes or Bloomberg, for the most up-to-date information on Elon Musk's net worth."
     }
 ]
