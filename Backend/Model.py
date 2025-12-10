@@ -4,10 +4,10 @@ from dotenv import dotenv_values
 
 # Load env variables
 env_vars = dotenv_values(".env")
-api_key = env_vars.get("CO_API_KEY")
+api_key = env_vars.get("Cohere_API_KEY")
 
 if not api_key:
-    raise ValueError("❌ No API key found. Make sure .env has CO_API_KEY=your_key")
+    raise ValueError("❌ No API key found. Make sure .env has Cohere_API_KEY=your_key")
 
 # Initialize Cohere client
 co = cohere.Client(api_key=api_key)
@@ -67,7 +67,7 @@ You will decide whether a query is a 'general' query, a 'realtime' query, or is 
 -> Respond with 'google search (topic)' if a query is asking to search a specific topic on google but if the query is asking to search multiple topics on google, respond with 'google search 1st topic, google search 2nd topic' and so on.
 -> Respond with 'youtube search (topic)' if a query is asking to search a specific topic on youtube but if the query is asking to search multiple topics on youtube, respond with 'youtube search 1st topic, youtube search 2nd topic' and so on.
 *** If the query is asking to perform multiple tasks like 'open facebook, telegram and close whatsapp' respond with 'open facebook, open telegram, close whatsapp' ***
-*** If the user is saying goodbye or wants to end the conversation like 'bye jarvis.' respond with 'exit'.***
+*** If the user is saying goodbye or wants to end the conversation like 'bye Ciel.' respond with 'exit'.***
 *** Respond with 'general (query)' if you can't decide the kind of query or if a query is asking to perform a task which is not mentioned above. ***
 """
 
