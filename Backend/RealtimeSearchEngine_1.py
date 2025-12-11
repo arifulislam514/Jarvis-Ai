@@ -1,214 +1,122 @@
-import requests
-from bs4 import BeautifulSoup
-import datetime
-from dotenv import dotenv_values
-from groq import Groq
-from json import load, dump
-import re
-import time
+from googlesearch import search
+from groq import Groq #Importing the Groq library to use its API.
+from json import load, dump #Importing functions to read and write JSON files.
+import datetime #Importing the datetime nodule for real-time date and time information.
+from dotenv import dotenv_values #Importing dotenv values to read environment variables from a env file.
 
-# ----------------------------- #
-#  Load Environment Variables
-# ----------------------------- #
+# Load environment variables from the .env file.
 env_vars = dotenv_values(".env")
 
-Username = env_vars.get("Username", "User")
-Assistantname = env_vars.get("Assistantname", "Ciel")
+#Retrieve environment variables for the chatbot configuration.
+Username = env_vars.get("Username")
+Assistantname = env_vars.get("Assistantname")
 GroqAPIKey = env_vars.get("GroqAPIKey")
 
+# Initialize the Groq client with the provided API key. Groq(api_key-GroqAPIKey)
 client = Groq(api_key=GroqAPIKey)
 
-# ----------------------------- #
-#  System Prompt
-# ----------------------------- #
-System = f"""Hello, I am {Username}, You are {Assistantname}, an advanced AI assistant.
-You have real-time access to the internet and can summarize fresh information professionally.
-Use correct grammar, punctuation, and provide clear, concise answers.
-"""
+# Define the system instructions for the chatbot.
+System = f"""Hello, I am {Username}, You are a very accurate and advanced AI chatbot named {Assistantname} which has real-time up-to-date information from the internet.
+*** Provide Answers In a Professional Way, make sure to add full stops, commas, question marks, and use proper grammar.***
+*** Just answer the question from the provided data in a professional way. ***"""
 
-# ----------------------------- #
-#  Utility Functions
-# ----------------------------- #
-def Information():
-    current_date_time = datetime.datetime.now()
-    return (
-        f"Real-time info:\n"
-        f"Date: {current_date_time.strftime('%A, %d %B %Y')}\n"
-        f"Time: {current_date_time.strftime('%H:%M:%S')}\n"
-    )
-
-def AnswerModifier(Answer):
-    lines = Answer.split('\n')
-    non_empty_lines = [line.strip() for line in lines if line.strip()]
-    return '\n'.join(non_empty_lines)
-
-# ----------------------------- #
-#  Chat Log Loader
-# ----------------------------- #
+#Try to load the chat log from a JSON file, or create an empty one if it doesn't exist.
 try:
     with open(r"Data\ChatLog.json", "r") as f:
         messages = load(f)
 except:
-    messages = []
     with open(r"Data\ChatLog.json", "w") as f:
         dump([], f)
+        
+# Function to perform a Google search and format the results.
+def GoogleSearch(query):
+    results = list (search (query, advanced=True, num_results=5))
+    Answer = f"The search results for '{query}' are:\n[start]\n"
+    
+    for i in results:
+        Answer += f"Title: {i.title}\nDescription: {i.description}\n\n"
+    
+    Answer += "[end]"
+    return Answer
+    
+#Function to clean up the answer by removing empty lines.
+def AnswerModifier(Answer):
+    lines = Answer.split('\n')
+    non_empty_lines = [line for line in lines if line.strip()]
+    modified_answer = '\n'.join(non_empty_lines)
+    return modified_answer
+    
+#Predefined chatbot conversation system message and an initial user message.
+SystemChatBot = [
+    {"role": "system", "content": System},
+    {"role": "user", "content": "Hi"},
+    {"role": "assistant", "content": "Hello, how can I help you?"}
+]
 
-# ----------------------------- #
-#  Currency Detection + API
-# ----------------------------- #
-def detect_currency_query(prompt):
-    """
-    Detects currency conversion requests robustly:
-    works for lowercase, uppercase, and mixed formats.
-    Examples it will detect:
-    - usd to bdt
-    - convert eur to inr
-    - 1 gbp in usd
-    - 100 usd vs bdt
-    """
-    text = prompt.upper().strip()
-    pattern = r"([A-Z]{3})\s*(?:TO|IN|VS)\s*([A-Z]{3})"
-    match = re.search(pattern, text)
-    if match:
-        base, target = match.groups()
-        return base.strip(), target.strip()
-    return None
-
-
-
-def fetch_currency_rate(base, target):
-    """
-    Fetch live currency conversion using open.er-api.com
-    (Free and works globally without API key)
-    """
-    try:
-        url = f"https://open.er-api.com/v6/latest/{base.upper()}"
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-
-        # API returns result='success' on success
-        if data.get("result") != "success":
-            return f"⚠️ API did not return success for {base}."
-
-        rates = data.get("rates", {})
-        if target.upper() in rates:
-            rate = rates[target.upper()]
-            return f"💱 As of now, 1 {base.upper()} = {rate:.2f} {target.upper()}."
-        else:
-            return f"⚠️ Conversion rate from {base} to {target} not found."
-    except Exception as e:
-        return f"❌ Currency fetch failed: {str(e)}"
-
-
-
-# ----------------------------- #
-#  DuckDuckGo Web Search
-# ----------------------------- #
-def search_duckduckgo(query, max_results=5):
-    print("🔎 Searching the web...")
-    headers = {"User-Agent": "Mozilla/5.0"}
-    search_url = f"https://duckduckgo.com/html/?q={query.replace(' ', '+')}"
-    try:
-        res = requests.get(search_url, headers=headers, timeout=10)
-        soup = BeautifulSoup(res.text, "html.parser")
-        results = []
-        for a in soup.select(".result__a")[:max_results]:
-            title = a.text
-            url = a.get("href")
-            if url.startswith("/"):
-                continue
-            results.append({"title": title, "url": url})
-        return results
-    except Exception as e:
-        print("❌ Search error:", e)
-        return []
-
-def fetch_page_text(url):
-    try:
-        headers = {"User-Agent": "Mozilla/5.0"}
-        res = requests.get(url, headers=headers, timeout=8)
-        soup = BeautifulSoup(res.text, "html.parser")
-        text = soup.get_text(separator=" ", strip=True)
-        return text[:1500]  # limit to avoid token overload
-    except:
-        return ""
-
-def summarize_content(text):
-    completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {"role": "system", "content": "Summarize the following text into concise, factual points."},
-            {"role": "user", "content": text},
-        ],
-        temperature=0.3,
-        max_tokens=300,
-    )
-    return completion.choices[0].message.content.strip()
-
-# ----------------------------- #
-#  Universal Realtime Search Engine
-# ----------------------------- #
+#Function to get real-time information like the corrent date and time.
+def Information():
+    data = ""
+    current_date_time = datetime.datetime.now()
+    day = current_date_time.strftime("%A")
+    date = current_date_time.strftime("%d")
+    month = current_date_time.strftime("%B")
+    year = current_date_time.strftime("%Y")
+    hour = current_date_time.strftime("%H")
+    minute = current_date_time.strftime("%M")
+    second = current_date_time.strftime("%S")
+    data += f"Use This Real-time Information if needed:\n"
+    data += f"Day: {day}\n"
+    data += f"Date: {date}\n"
+    data += f"Month: {month}\n"
+    data += f"Year: {year}\n"
+    data += f"Time: {hour} hours, {minute} minutes, (second) seconds.\n"
+    return data
+    
+#Function to handle real-time search and response generation.
 def RealtimeSearchEngine(prompt):
-    global messages
-
-    # Log the user query
+    global SystemChatBot, messages
+    
+    #Load the chat log from the JSON file.
     with open(r"Data\ChatLog.json", "r") as f:
         messages = load(f)
-    messages.append({"role": "user", "content": prompt})
+    messages.append({"role": "user", "content": f"{prompt}"})
+    
+    #Add Google search results to the system chatbot messages.
+    SystemChatBot.append({"role": "system", "content": GoogleSearch(prompt)})
 
-    # ⚡ 1. Currency Fallback
-    currency_pair = detect_currency_query(prompt)
-    if currency_pair:
-        base, target = currency_pair
-        answer = fetch_currency_rate(base, target)
-        print("🧠 Using currency API...")
-        messages.append({"role": "assistant", "content": answer})
-        with open(r"Data\ChatLog.json", "w") as f:
-            dump(messages, f, indent=4)
-        return answer
-
-    # ⚙️ 2. Web Search
-    results = search_duckduckgo(prompt)
-    if not results:
-        return "I couldn’t find relevant information online."
-
-    combined_text = ""
-    for r in results:
-        page_text = fetch_page_text(r["url"])
-        combined_text += f"{r['title']}\n{page_text}\n\n"
-        time.sleep(0.5)
-
-    summarized_info = summarize_content(combined_text)
-
-    print("🧠 Generating final answer with Groq...")
+    # Generate a response using the brog client.
     completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {"role": "system", "content": System},
-            {"role": "system", "content": Information()},
-            {"role": "user", "content": f"Question: {prompt}\n\nContext:\n{summarized_info}"},
-        ],
-        temperature=0.5,
-        max_tokens=800,
+        model = "llama3-70b-8192",
+        messages = SystemChatBot + [{"role": "system", "content": Information()}] + messages,
+        temperature = 0.7,
+        max_tokens = 2048,
+        top_p=1,
+        stream = True,
+        stop=None
     )
-    Answer = completion.choices[0].message.content.strip()
 
+    Answer = ""
+
+
+    #Concatenate response chunks from the streaming output.
+    for chunk in completion:
+        if chunk.choices[0].delta.content:
+            Answer +=chunk.choices[0].delta.content
+        
+    # Clean up the response.
+    Answer = Answer.strip().replace("</s>", "")
     messages.append({"role": "assistant", "content": Answer})
+
+    # Save the updated chat log back to the JSON file.
     with open(r"Data\ChatLog.json", "w") as f:
         dump(messages, f, indent=4)
+            
+    # Remove the most recent system message from the chatbot conversation.
+    SystemChatBot.pop()
+    return AnswerModifier(Answer=Answer)
 
-    return AnswerModifier(Answer)
-
-
-# ----------------------------- #
-#  Main Loop
-# ----------------------------- #
+#main entry point of the program for interactive uerying.
 if __name__ == "__main__":
-    print(f"{Assistantname} is online. Type 'exit' to quit.\n")
     while True:
-        prompt = input("Enter your Query: ")
-        if prompt.lower() in ["exit", "quit"]:
-            print("Goodbye!")
-            break
+        prompt = input("Enter your query: ")
         print(RealtimeSearchEngine(prompt))
