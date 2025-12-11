@@ -86,13 +86,13 @@ def RealtimeSearchEngine(prompt):
 
     # Generate a response using the brog client.
     completion = client.chat.completions.create(
-        model = "llama3-70b-8192",
+        model = "groq/compound-mini",
         messages = SystemChatBot + [{"role": "system", "content": Information()}] + messages,
         temperature = 0.7,
         max_tokens = 2048,
-        top_p=1,
+        top_p = 1,
         stream = True,
-        stop=None
+        stop = None
     )
 
     Answer = ""
