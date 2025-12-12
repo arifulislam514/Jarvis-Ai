@@ -1,7 +1,7 @@
 # Import required libraries
 from AppOpener import close, open as appopen #Import functions to open and close apps. 
 from webbrowser import open as webopen # Import web browser functionality. 
-from pywhatkit import search, playonyt #Import functions for Google search and YouTube playback. 
+# from pywhatkit import search, playonyt #Import functions for Google search and YouTube playback. 
 from dotenv import dotenv_values #Import doteny to manage environment variables. 
 from bs4 import BeautifulSoup # Import BeautifulSoup for parsing HTML content. 
 from rich import print #Import rich for styled console output. 
@@ -44,8 +44,17 @@ SystemChatBot = [{"role": "system", "content": f"Hello, I am {os.environ['userna
 
 #Function to perform a Google search. 
 def GoogleSearch(Topic):
-    search(Topic) # Use pywhatkit's search function to perform a Google search.
-    return True # Indicate success.
+    try:
+        from pywhatkit import search
+        search(Topic)
+        return True
+    except Exception as e:
+        print(f"[red]GoogleSearch failed (pywhatkit / internet): {e}[/red]")
+        # fallback: open browser search page
+        import urllib.parse
+        url = "https://www.google.com/search?q=" + urllib.parse.quote_plus(Topic)
+        webbrowser.open(url)
+        return True
 
 # Function to generate content using AI and save it to a file.
 def Content (Topic):
@@ -99,8 +108,17 @@ def YouTubeSearch(Topic):
 
 #Function to play a video on YouTube.
 def PlayYoutube(query):
-    playonyt(query) # Use pywhatkit's playonyt function to play the video.
-    return True #Indicate success.
+    try:
+        from pywhatkit import playonyt
+        playonyt(query)
+        return True
+    except Exception as e:
+        print(f"[red]PlayYoutube failed (pywhatkit / internet): {e}[/red]")
+        # fallback: open youtube search page
+        import urllib.parse
+        url = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(query)
+        webbrowser.open(url)
+        return True
 
 #Function to open an application or a relevant webpage.
 def OpenApp(app, sess=requests.session()):
@@ -205,7 +223,7 @@ async def TranslateAndExecute(commands: list[str]):
             pass
         
         elif command.startswith("close"): # Handle "close" commands.
-            fun = asyncio.to_thread (CloseApp, command.removeprefix("close")) #Schedule app closing.
+            fun = asyncio.to_thread(CloseApp, command.removeprefix("close")) #Schedule app closing.
             funcs.append(fun)
             
         elif command.startswith("play "): #Handle "play" commands.
