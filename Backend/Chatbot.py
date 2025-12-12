@@ -76,9 +76,9 @@ def ChatBot (Query):
         
         # Make a request to the Groq API for a response.
         completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",  # Updated model ID
+            model="llama-3.1-8b-instant",  # Updated model ID
             messages=SystemChatBot + [{"role": "system", "content": RealtimeInformation()}] + messages,
-            max_tokens=1024,
+            max_tokens=512,
             temperature=0.7,
             top_p=1,
             stream=True,

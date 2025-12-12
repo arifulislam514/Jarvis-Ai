@@ -1,171 +1,19 @@
 [
     {
         "role": "user",
-        "content": ".."
+        "content": "If my."
     },
     {
         "role": "assistant",
-        "content": "It seems you haven't asked a question yet. Please go ahead and ask, I'll be happy to help."
+        "content": "It seems like your question is cut off. Could you please complete your question so I can provide a more accurate answer?"
     },
     {
         "role": "user",
-        "content": ".."
+        "content": "I have that link setup."
     },
     {
         "role": "assistant",
-        "content": "You still haven't asked a question. Please go ahead and ask, I'll do my best to provide a helpful response."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "It seems like you're not providing a question. Could you please ask something so I can assist you?"
-    },
-    {
-        "role": "user",
-        "content": "??"
-    },
-    {
-        "role": "assistant",
-        "content": "You're still not providing a clear question. Please ask something specific so I can give you a helpful answer."
-    },
-    {
-        "role": "user",
-        "content": "??"
-    },
-    {
-        "role": "assistant",
-        "content": "Today is Friday, 12\u202fDecember\u202f2025, and the current time is approximately\u202f12:32\u202fPM. How may I assist you?"
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "It seems like you're not asking a question. Please provide one so I can assist you."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "You still haven't asked a question. Please go ahead and ask something."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "I'm here to help, but I need you to ask a question first."
-    },
-    {
-        "role": "user",
-        "content": ".?"
-    },
-    {
-        "role": "assistant",
-        "content": "Please ask a clear question so I can provide a helpful response."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "I\u2019m here to help, but I need a clear question or topic from you. Could you let me know what you\u2019d like assistance with?"
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "You still haven't provided a question. Please ask something so I can assist you."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "It seems like you're not providing any information or question. Please ask something so I can help."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "I'm waiting for your question. Please go ahead and ask."
-    },
-    {
-        "role": "user",
-        "content": ".."
-    },
-    {
-        "role": "assistant",
-        "content": "Please provide a question or topic you'd like to discuss."
-    },
-    {
-        "role": "user",
-        "content": "??"
-    },
-    {
-        "role": "assistant",
-        "content": "It seems like you're trying to ask something, but it's not clear. Could you please rephrase or provide more context?"
-    },
-    {
-        "role": "user",
-        "content": "Hello."
-    },
-    {
-        "role": "assistant",
-        "content": "Hello. It's nice to meet you. Is there something I can help you with or would you like to chat?"
-    },
-    {
-        "role": "user",
-        "content": "How are you?"
-    },
-    {
-        "role": "assistant",
-        "content": "I'm doing well, thanks for asking. I'm ready to help with any questions or topics you'd like to discuss."
-    },
-    {
-        "role": "user",
-        "content": "tell me the time."
-    },
-    {
-        "role": "assistant",
-        "content": "It's 1:02 PM."
-    },
-    {
-        "role": "user",
-        "content": "can you have to text me later."
-    },
-    {
-        "role": "assistant",
-        "content": "I'm a large language model, I don't have the ability to send text messages. I can only communicate with you through this chat."
-    },
-    {
-        "role": "user",
-        "content": "Company of it."
-    },
-    {
-        "role": "assistant",
-        "content": "You're referring to the company that created me."
-    },
-    {
-        "role": "user",
-        "content": "My."
-    },
-    {
-        "role": "assistant",
-        "content": "It seems like you started to say something, but it got cut off. Could you please finish your thought?"
+        "content": "It seems like your question is still incomplete. Could you please provide more context or complete your question about the link setup?"
     },
     {
         "role": "user",
@@ -173,6 +21,6 @@
     },
     {
         "role": "assistant",
-        "content": "Bye! Have a great day!"
+        "content": "Goodbye Ariful Islam."
     }
 ]

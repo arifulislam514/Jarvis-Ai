@@ -3,6 +3,9 @@ from groq import Groq #Importing the Groq library to use its API.
 from json import load, dump #Importing functions to read and write JSON files.
 import datetime #Importing the datetime nodule for real-time date and time information.
 from dotenv import dotenv_values #Importing dotenv values to read environment variables from a env file.
+from groq import APIError
+import time
+import re
 
 # Load environment variables from the .env file.
 env_vars = dotenv_values(".env")
@@ -27,7 +30,7 @@ try:
 except:
     with open(r"Data\ChatLog.json", "w") as f:
         dump([], f)
-        
+    
 # Function to perform a Google search and format the results.
 def GoogleSearch(query):
     results = list (search (query, advanced=True, num_results=5))
@@ -85,15 +88,28 @@ def RealtimeSearchEngine(prompt):
     SystemChatBot.append({"role": "system", "content": GoogleSearch(prompt)})
 
     # Generate a response using the brog client.
-    completion = client.chat.completions.create(
-        model = "groq/compound-mini",
-        messages = SystemChatBot + [{"role": "system", "content": Information()}] + messages,
-        temperature = 0.7,
-        max_tokens = 2048,
-        top_p = 1,
-        stream = True,
-        stop = None
-    )
+    def _retry_seconds(err: str) -> float:
+        m = re.search(r"try again in\s+((\d+)m)?([\d.]+)s", err, re.I)
+        if not m:
+            return 2.0
+        mins = float(m.group(2) or 0)
+        secs = float(m.group(3) or 0)
+        return mins * 60 + secs
+    
+    try:
+        completion = client.chat.completions.create(
+            model="groq/compound-mini",
+            messages=SystemChatBot + [{"role": "system", "content": Information()}] + messages,
+            temperature=0.7,
+            max_tokens=512,
+            top_p=1,
+            stream=True,
+        )
+    except APIError as e:
+        if "rate_limit" in str(e).lower():
+            time.sleep(min(_retry_seconds(str(e)), 10))
+            return "I'm temporarily rate-limited. Please try again."
+        raise
 
     Answer = ""
 

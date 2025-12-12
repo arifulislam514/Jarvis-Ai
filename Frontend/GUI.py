@@ -25,25 +25,21 @@ def AnswerModifier(Answer):
     return modified_answer
 
 
-def QueryModifier(Query):
-    new_query = Query.lower().strip()
-    query_words = new_query.split()
-    question_words = [
-        "how", "what", "who", "where", "when", "why", "which", "whose",
-        "whom", "can you", "what's", "where's", "how's"
-    ]
+def QueryModifier(Query: str) -> str:
+    q = (Query or "").strip()
+    if not q:
+        return ""
 
-    if any(word + " " in new_query for word in question_words):
-        if query_words[-1][-1] in ['.', '?', '!']:
-            new_query = new_query[-1] + "?"
-        else:
-            new_query += "?"
-    else:
-        if query_words[-1][-1] in ['.', '?', ' ! ']:
-            new_query = new_query[-1] + "."
-        else:
-            new_query += "."
-    return new_query.capitalize()
+    is_question = q.endswith("?") or q.lower().startswith(
+        ("how", "what", "who", "where", "when", "why", "which", "whose", "whom", "can you", "could you", "would you")
+    )
+
+    # remove trailing punctuation
+    if q[-1] in ".?!":
+        q = q[:-1].strip()
+
+    q = q[0].upper() + q[1:] if len(q) > 1 else q.upper()
+    return q + ("?" if is_question else ".")
 
 
 def SetMicrophoneStatus(Command):

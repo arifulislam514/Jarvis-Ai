@@ -69,9 +69,9 @@ def Content (Topic):
         messages.append({"role": "user", "content": f" {prompt}"}) # Add the user's prompt to messages. 
     
         completion = client.chat.completions.create(
-            model="mixtral-8x7b-32768", # Specify the AI model.
+            model="qwen/qwen3-32b", # Specify the AI model.
             messages=SystemChatBot + messages, # Include system instructions and chat history.
-            max_tokens=2048, # Limit the maximum tokens in the response.
+            max_tokens=512, # Limit the maximum tokens in the response.
             temperature=0.7, # Adjust response randomness.
             top_p=1, # Use nucleus sampling for response diversity. 
             stream=True, # Enable streaming response.
@@ -266,5 +266,5 @@ async def Automation(commands: list[str]):
     return True # Indicate success.
 
 if __name__ == "__main__":
-    asyncio.run(Automation(["open whatsapp", "play 1000 yeas"])) # Example usage of the Automation function.
+    asyncio.run(Automation(["write a poem on moon"])) # Example usage of the Automation function.
     

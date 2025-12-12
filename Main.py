@@ -21,6 +21,7 @@ import subprocess
 import threading 
 import json 
 import os
+import sys
 
 env_vars= dotenv_values(".env")
 Username = env_vars.get("Username")
@@ -100,16 +101,21 @@ def MainExecution():
                 run(Automation(list(Decision))) 
                 TaskExecution = True
     if ImageExecution == True:
-        with open(r"Frontend\Files\ImageGeneratoion.data", "w") as file:
-            file.write(f"{ImageGenerationQuery}, True")
+        prompt = ImageGenerationQuery.removeprefix("generate image").strip().strip(".")
+        with open(r"Frontend\Files\ImageGeneration.data", "w", encoding="utf-8") as file:
+            file.write(f"{prompt},True")
             try:
-                p1 = subprocess.Popen(['python', r'Backend\ImageGeneration.py'],
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, 
-                    shell=False)
+                p1 = subprocess.Popen(
+                    [sys.executable, r'Backend\ImageGeneration.py'],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    stdin=subprocess.PIPE,
+                    shell=False
+                )
                 subprocesses.append(p1)
             except Exception as e:
                 print("Error starting ImageGeneration.py: {e}")
-    if G and R or R:
+    if G and R:
         SetAssistantStatus("Searching...")
         Answer = RealtimeSearchEngine (QueryModifier (Mearged_query)) 
         ShowTextToScreen(f" {Assistantname}:{Answer}")

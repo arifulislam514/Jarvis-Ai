@@ -1,0 +1,39 @@
+<think>
+Okay, the user wants a Python program to check if a number is odd or even. Let me start by recalling the basic method to determine this. The modulus operator % gives the remainder when divided by 2. If the number % 2 equals 0, it's even; otherwise, it's odd.
+
+First, I need to create a simple Python script. The program should take input from the user. Maybe using input() function and converting it to an integer. Then apply the modulus operation.
+
+Wait, what if the user enters a non-integer? Should I handle that? The user didn't specify error handling, so maybe just assume valid input for simplicity.
+
+Next, the program should print whether the number is even or odd. Let me structure the code step by step: get the input, check the condition, and print the result.
+
+Also, the user might want to test multiple numbers. Should the program loop? The original query doesn't mention a loop, so perhaps a single check is sufficient. But adding an option to check another number could be helpful. Hmm, but the user might prefer a straightforward example.
+
+Let me write the basic version first. Let's see:
+
+number = int(input("Enter a number: "))
+if number % 2 == 0:
+    print("Even")
+else:
+    print("Odd")
+
+That's the core of the program. Then, maybe add a message to explain the result. Also, handle negative numbers, but modulus works the same for negatives in Python. For example, -3 % 2 is 1, which is correct.
+
+Testing the code with a few examples: 4 should be even, 5 odd, 0 even, -2 even. All should work correctly.
+
+Wait, the user wrote "card or even number". Maybe they meant "odd or even". Probably a typo. So the program checks for odd/even.
+
+I should explain the code with comments for clarity. Also, mention that the program handles any integer input. Maybe provide an example of running the code.
+
+Including a sample output would help the user understand the expected result. For instance, if the input is 7, the output is "Odd".
+
+Finally, ensure the code is properly formatted and easy to read. Let me put it all together in a Python script format.
+</think>
+
+Here's a simple Python program to check if a number is **odd** or **even**:
+
+---
+
+### **Python Code**
+```python
+# Python program to check if a number is odd or
