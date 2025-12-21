@@ -11,7 +11,9 @@ import subprocess # Import subprocess for interacting with the system.
 import requests # Import requests for making HTTP requests.
 import keyboard #Import keyboard for keyboard-related actions. 
 import asyncio # Import asyncio for asynchronous programming. 
-import os # Import os for operating system functionalities.
+import os
+
+import urllib # Import os for operating system functionalities.
 
 #Load environment variables from the .env file.
 env_vars= dotenv_values(".env")
@@ -121,39 +123,30 @@ def PlayYoutube(query):
         return True
 
 #Function to open an application or a relevant webpage.
-def OpenApp(app, sess=requests.session()):
-    try:
-        appopen(app, match_closest=True, output=True, throw_error=True) # Attempt to open the app.
-        return True # Indicate success.
-    
-    except:
-        #Nested function to extract links from HTML content.
-        def extract_links(html):
-            if html is None:
-                return []
-            soup = BeautifulSoup(html, 'html.parser') # Parse the HTML content. 
-            links = soup.find_all('a', {'jsname': 'UWckNb'}) #Find relevant links. 
-            return [link.get('href') for link in links] #Return the links.
-        
-        # NESLED TUNCTION LO PEITOI'll a Google search and Telleve HTML. 
-        def search_google(query):
-            url = f"https://www.google.com/search?q={query}"# Construct the Google search URL.
-            headers = {"User-Agent": useragent} # Use the predefined user-agent. 
-            response = sess.get(url, headers=headers) # Perform the GET request.
-            
-            if response.status_code == 200:
-                return response.text # Return the HTML content.
-            else:
-                print("Failed to retrieve search results.") # Print an error message.
-            return None
+def OpenApp(app, sess=None):
+    """
+    Try to open an installed app.
+    If not installed, DON'T hang — return: "App '<name>' is not available".
+    Optionally, you can open a web search page instead.
+    """
+    if sess is None:
+        sess = requests.Session()
 
-        html = search_google(app) # Perform the Google search.
-        
-        if html:
-            link = extract_links(html)[0] #Extract the first link from the search results. 
-            webopen(link) # Open the link in a web browser.
-            
-        return True #Indicate success.
+    try:
+        appopen(app, match_closest=True, output=True, throw_error=True)
+        return True
+
+    except Exception:
+        # --- quick & safe fallback (NO hanging) ---
+        try:
+            # Instead of scraping Google HTML (fragile), just open search page quickly
+            # (This is optional — remove these 2 lines if you ONLY want the message.)
+            q = urllib.parse.quote_plus(app)
+            webbrowser.open(f"https://{q}.com")
+        except Exception:
+            pass
+
+        return f"App '{app}' is not available on this system."
     
 #Function to close an application. 
 def CloseApp(app):
@@ -259,11 +252,10 @@ async def TranslateAndExecute(commands: list[str]):
             
 # Asynchronous function to autonate command execution. 
 async def Automation(commands: list[str]):
-    
-    async for result in TranslateAndExecute(commands):#Translate and execute commands.
-        pass
-    
-    return True # Indicate success.
+    async for result in TranslateAndExecute(commands):
+        if isinstance(result, str):
+            print(result)          # <--- now you will see "App 'x' is not available"
+    return True
 
 if __name__ == "__main__":
     asyncio.run(Automation(["write a poem on moon"])) # Example usage of the Automation function.

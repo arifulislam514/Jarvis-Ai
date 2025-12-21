@@ -1,26 +1,18 @@
 [
     {
         "role": "user",
-        "content": "If my."
+        "content": "When you do?"
     },
     {
         "role": "assistant",
-        "content": "It seems like your question is cut off. Could you please complete your question so I can provide a more accurate answer?"
+        "content": "When do I do what?"
     },
     {
         "role": "user",
-        "content": "I have that link setup."
+        "content": "Open wedding."
     },
     {
         "role": "assistant",
-        "content": "It seems like your question is still incomplete. Could you please provide more context or complete your question about the link setup?"
-    },
-    {
-        "role": "user",
-        "content": "ay, Bye!"
-    },
-    {
-        "role": "assistant",
-        "content": "Goodbye Ariful Islam."
+        "content": "You're referring to the \"Open\" or \"Opening\" of a wedding. In many cultures, the ceremony or event is begun with the opening or \"open\" of the wedding."
     }
 ]

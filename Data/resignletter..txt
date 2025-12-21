@@ -1,0 +1,35 @@
+<think>
+Okay, the user wants a resignation letter. Let me start by understanding the key components of a proper resignation letter. First, the subject line needs to be clear and direct, like "Resignation Letter". Then the body should include the employee's details, the position they're resigning from, the last working day, and the date of the letter. The user probably wants to keep it professional but also express gratitude.
+
+Hmm, maybe they need to mention the reason for leaving, but I should avoid being too personal unless specified. The user might also want to offer assistance during the transition period. I should make sure the tone is appreciative and not negative. Let me check if there are any placeholders needed, like the employee's name, manager's name, company name, and dates. 
+
+Wait, should I include a section about returning company property? That's a good point to mention. Also, maybe a note about the decision being difficult to emphasize professionalism. Oh, and the employee's contact information at the end. Let me structure it step by step: start with the sender's info, date, recipient's info, subject line, body with resignation announcement, reasons, gratitude, transition offer, and a formal closing. 
+
+I need to make sure the language is polite and concise. Avoid any jargon. Maybe provide an example with placeholders so the user can customize it. Also, remind them that this is a template and they can adjust it as needed. Let me put that all together now.
+</think>
+
+Certainly! Here's a professional and polite resignation letter template you can customize based on your situation:
+
+---
+
+**[Your Name]**  
+[Your Address]  
+[City, State, ZIP Code]  
+[Email Address]  
+[Phone Number]  
+[Date]  
+
+**To:**  
+[Manager's Name]  
+[Manager's Job Title]  
+[Company Name]  
+[Company Address]  
+[City, State, ZIP Code]  
+
+**Subject: Resignation Letter**  
+
+Dear [Manager's Name],  
+
+I am writing to formally resign from my position as [Your Job Title] at [Company Name], effective [Last Working Day, typically two weeks from the submission date]. This decision was not made lightly, as I have greatly valued the opportunities for growth, the support from our team, and the experiences I’ve gained during my time here.  
+
+After careful consideration, I have decided to pursue [briefly mention your reason for leaving, e.g., "a new professional opportunity," "a shift
