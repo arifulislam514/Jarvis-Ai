@@ -1,0 +1,23 @@
+Cohere_API_KEY=
+Username=Sir
+Assistantname=Ciel
+GroqAPIKey=
+InputLanguage=en
+AssistantVoice=en-US-AriaNeural
+HuggingFaceAPIKey=
+
+# Whisper STT (multilingual)
+STT_MODEL_SIZE=deepdml/faster-whisper-large-v3-turbo-ct2
+STT_DEVICE=cpu
+STT_COMPUTE=int8
+OUTPUT_LANGUAGE=en
+
+# Optional tuning
+MAX_RECORD_SECONDS=8
+SILENCE_STOP_SECONDS=1.2
+CALIBRATION_SECONDS=0.5
+SAMPLE_RATE=16000
+# MIC_DEVICE=0
+# STT tuning for Bangla
+INPUT_LANGUAGE=bn
+STT_BEAM_SIZE=5
