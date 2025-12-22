@@ -6,6 +6,21 @@ InputLanguage=en
 AssistantVoice=en-US-AriaNeural
 HuggingFaceAPIKey=
 
+# Email configuration for sending emails (SMTP)
+# Example for Gmail:
+#   SMTP_HOST=smtp.gmail.com
+#   SMTP_PORT=587
+#   SMTP_USE_TLS=true
+#   SMTP_USER=your_email@gmail.com
+#   SMTP_PASS=your_app_password
+#   SMTP_FROM=your_email@gmail.com
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+SMTP_USE_TLS=true
+SMTP_FROM=
+
 # Whisper STT (multilingual)
 STT_MODEL_SIZE=deepdml/faster-whisper-large-v3-turbo-ct2
 STT_DEVICE=cpu

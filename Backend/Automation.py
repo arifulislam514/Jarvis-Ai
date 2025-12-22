@@ -12,8 +12,9 @@ import requests # Import requests for making HTTP requests.
 import keyboard #Import keyboard for keyboard-related actions. 
 import asyncio # Import asyncio for asynchronous programming. 
 import os
-
 import urllib # Import os for operating system functionalities.
+import smtplib
+from email.message import EmailMessage
 
 #Load environment variables from the .env file.
 env_vars= dotenv_values(".env")
@@ -101,6 +102,84 @@ def Content (Topic):
         
     OpenNotepad(rf"Data\{Topic.lower().replace(' ', '')}.txt") # Open the file in Notepad. 
     return True #Indicate success.
+
+# sending email function
+def SendEmailSMTP(to_email: str, subject: str, body: str, cc: str = "", bcc: str = ""):
+    """
+    Send an email using SMTP settings from .env.
+    Returns True on success, or an error string on failure.
+    """
+    host = env_vars.get("SMTP_HOST")
+    port = int(env_vars.get("SMTP_PORT", "587"))
+    user = env_vars.get("SMTP_USER")
+    password = env_vars.get("SMTP_PASS")
+    use_tls = str(env_vars.get("SMTP_USE_TLS", "true")).lower() in ("1", "true", "yes", "y", "on")
+    from_addr = env_vars.get("SMTP_FROM") or user
+
+    if not all([host, port, user, password, from_addr]):
+        return "SMTP is not configured. Please set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM in .env"
+
+    msg = EmailMessage()
+    msg["From"] = from_addr
+    msg["To"] = to_email
+    if cc:
+        msg["Cc"] = cc
+    msg["Subject"] = subject
+    msg.set_content(body)
+
+    recipients = [to_email]
+    if cc:
+        recipients += [x.strip() for x in cc.split(",") if x.strip()]
+    if bcc:
+        recipients += [x.strip() for x in bcc.split(",") if x.strip()]
+
+    try:
+        with smtplib.SMTP(host, port, timeout=20) as server:
+            server.ehlo()
+            if use_tls:
+                server.starttls()
+                server.ehlo()
+            server.login(user, password)
+            server.send_message(msg, from_addr=from_addr, to_addrs=recipients)
+        return True
+    except Exception as e:
+        return f"Email failed: {e}"
+
+# Add a small parser for the command string
+# This lets you pass one “email … | subject … | body …” command cleanly:
+def parse_email_command(command: str):
+    """
+    Expected format:
+      email to someone@site.com | subject Hello | body This is the message | cc a@x.com,b@y.com | bcc c@z.com
+    """
+    raw = command.strip()
+    # remove leading "email " or "send email "
+    raw = raw.removeprefix("send email ").removeprefix("email ").strip()
+
+    parts = [p.strip() for p in raw.split("|") if p.strip()]
+    data = {"to": "", "subject": "", "body": "", "cc": "", "bcc": ""}
+
+    for p in parts:
+        lower = p.lower()
+        if lower.startswith("to "):
+            data["to"] = p[3:].strip()
+        elif lower.startswith("subject "):
+            data["subject"] = p[8:].strip()
+        elif lower.startswith("body "):
+            data["body"] = p[5:].strip()
+        elif lower.startswith("cc "):
+            data["cc"] = p[3:].strip()
+        elif lower.startswith("bcc "):
+            data["bcc"] = p[4:].strip()
+
+    # also support: "to someone@x.com" without the pipe
+    if not data["to"] and raw.lower().startswith("to "):
+        data["to"] = raw[3:].strip()
+
+    if not data["to"] or not data["subject"] or not data["body"]:
+        return None, "Email command needs: to, subject, body. Example: email to a@b.com | subject Hi | body Hello"
+    return data, None
+
 
 #Function to search for a topic on YouTube.
 def YouTubeSearch(Topic):
@@ -238,6 +317,22 @@ async def TranslateAndExecute(commands: list[str]):
         elif command.startswith("system"): # Handle system commands.
             fun = asyncio.to_thread (System, command.removeprefix("system")) # Schedule system command. 
             funcs.append(fun)
+        
+        elif command.startswith("email ") or command.startswith("send email "):
+            data, err = parse_email_command(command)
+            if err:
+                # return a message string so Automation() prints it
+                funcs.append(asyncio.to_thread(lambda: err))
+            else:
+                fun = asyncio.to_thread(
+                    SendEmailSMTP,
+                    data["to"],
+                    data["subject"],
+                    data["body"],
+                    data["cc"],
+                    data["bcc"],
+                )
+                funcs.append(fun)
             
         else:
             print(f"No Function Found. For {command}") # Print an error for unrecognized commands.
@@ -258,5 +353,7 @@ async def Automation(commands: list[str]):
     return True
 
 if __name__ == "__main__":
-    asyncio.run(Automation(["write a poem on moon"])) # Example usage of the Automation function.
-    
+    asyncio.run(Automation([
+        "email to test@example.com | subject Test Email | body Hello from my automation!"
+    ]))
+

@@ -1,0 +1,15 @@
+<think>
+Okay, the user just said "email" again. Let me check the history. The first time, they asked for an email, and I asked for more details. Now they're repeating "email". Maybe they forgot to provide the necessary information. I need to prompt them again.
+
+Wait, maybe they want an example? But in their initial request, they didn't specify. Let me make sure. They might be testing if I'll just write something generic. But without context, any email could be wrong. It's better to ask again politely.
+
+I should respond by asking for the specifics again, maybe with a friendly reminder. Let me structure it in a way that's encouraging but clear. Highlight the key points they need to provide. Also, offer to help once they do. That should work.
+</think>
+
+Certainly! To create an effective email, I’ll need a bit more information. Could you clarify the **purpose** of the email (e.g., job application, meeting request, inquiry, announcement)? For example:  
+
+- Are you writing to **apply for a position**, **request information**, or **invite someone**?  
+- Who is the **recipient** (e.g., employer, colleague, client)?  
+- What **key details** should be included (e.g., deadlines, project names, questions)?  
+
+Let me know, and I’ll craft it for you! 😊

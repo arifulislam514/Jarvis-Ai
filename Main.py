@@ -10,7 +10,14 @@ GetMicrophoneStatus,
 GetAssistantStatus)
 from Backend.Model import FirstLayerDMM
 from Backend.RealtimeSearchEngine import RealtimeSearchEngine
-from Backend.Automation import Automation
+from Backend.Automation import Automation, SendEmailSMTP
+from Backend.EmailAssistant import (
+    extract_emails,
+    clean_subject,
+    maybe_extract_subject,
+    maybe_extract_about,
+    draft_email_body,
+)
 from Backend.SpeechToText import SpeechRecognition
 from Backend.Chatbot import ChatBot
 from Backend.TextToSpeech import TextToSpeech
@@ -22,6 +29,7 @@ import threading
 import json 
 import os
 import sys
+import re
 
 env_vars= dotenv_values(".env")
 Username = env_vars.get("Username")
@@ -30,6 +38,112 @@ DefaultMessage = f''' {Username} : Hello {Assistantname}, How are you?
 {Assistantname} Welcome {Username}. I am doing well. How may i help you?''' 
 subprocesses = []
 Functions = ["open", "close", "play", "system", "content", "google search", "youtube search"]
+
+
+def _norm_cmd(text: str) -> str:
+    """Normalize short voice commands (strip trailing punctuation)."""
+    t = (text or "").strip().lower()
+    t = re.sub(r"[\s\.,;:!\?]+$", "", t)
+    return t
+
+
+def _speak_and_show(text: str):
+    ShowTextToScreen(f" {Assistantname} : {text}")
+    SetAssistantStatus("Answering...")
+    TextToSpeech(text)
+
+
+def _ask_user(prompt: str) -> str:
+    """Ask the user a question via TTS, then listen for their reply."""
+    _speak_and_show(prompt)
+    SetAssistantStatus("Listening ... ")
+    ans = SpeechRecognition()
+    ShowTextToScreen(f"{Username} : {ans}")
+    return ans
+
+
+def SendEmailFlow(initial_command: str = "") -> bool:
+    """Interactive email flow.
+
+    Triggered when the user says "send email".
+    - Ask recipient email
+    - Ask subject
+    - Draft a well-structured email body
+    - Send via SMTP
+    """
+
+    # 1) Recipient(s)
+    recipients = extract_emails(initial_command)
+    if not recipients:
+        r_text = _ask_user("Please tell me the recipient email address.")
+        recipients = extract_emails(r_text)
+
+    # one retry if STT didn't capture an email cleanly
+    if not recipients:
+        r_text = _ask_user("I couldn't detect a valid email address. Please say it again, like john@example.com.")
+        recipients = extract_emails(r_text)
+
+    if not recipients:
+        _speak_and_show("Sorry, I still couldn't detect a valid email address, so I cancelled sending the email.")
+        return False
+
+    # 2) Subject
+    subject = maybe_extract_subject(initial_command)
+    if not subject:
+        subject = _ask_user("What should the email subject be?")
+    subject = clean_subject(subject)
+
+    if not subject:
+        _speak_and_show("I didn't catch a subject. Cancelling the email.")
+        return False
+
+    # Optional context if user said: "send email ... about ..."
+    about = maybe_extract_about(initial_command)
+
+    # 3) Draft email body (or use provided body)
+    # Supports commands like: "send email to a@b.com subject X body Y"
+    body_match = re.search(r"\bbody\b\s+(.*)$", initial_command or "", flags=re.I)
+    provided_body = (body_match.group(1).strip() if body_match else "")
+
+    SetAssistantStatus("Writing email...")
+    body = provided_body or draft_email_body(subject=subject, about=about)
+
+    # Show a preview in the chat (voice reads only the status)
+    ShowTextToScreen(
+        f" {Assistantname} : Draft email\n"
+        f"To: {', '.join(recipients)}\n"
+        f"Subject: {subject}\n\n"
+        f"{body}"
+    )
+    TextToSpeech("Okay. I drafted the email and I am sending it now.")
+
+    # 4) Send
+    SetAssistantStatus("Sending email...")
+    ok = []
+    failed = []
+    for to_addr in recipients:
+        res = SendEmailSMTP(to_addr, subject, body)
+        if res is True:
+            ok.append(to_addr)
+        else:
+            failed.append((to_addr, res))
+
+    # 5) Report result
+    if ok and not failed:
+        _speak_and_show("Email sent successfully.")
+        return True
+
+    lines = []
+    if ok:
+        lines.append(f"✅ Sent to: {', '.join(ok)}")
+    if failed:
+        lines.append("❌ Failed:")
+        for to_addr, err in failed:
+            lines.append(f"  - {to_addr}: {err}")
+
+    ShowTextToScreen(f" {Assistantname} : " + "\n".join(lines))
+    _speak_and_show("I couldn't send the email to everyone. Please check the chat for details.")
+    return False
 def ShowDefaultChatIfNoChats():
     File = open(r' Data\ChatLog.json', "r", encoding='utf-8')
     if len(File.read())<5:
@@ -80,8 +194,24 @@ def MainExecution():
     SetAssistantStatus("Listening ... ") 
     Query = SpeechRecognition() 
     ShowTextToScreen (f"{Username} : {Query}") 
+
+    # --- Interactive send-email shortcut ---
+    # If the user only says "send email" (no recipient/subject), start an interactive flow.
+    if _norm_cmd(Query) in {"send email", "send an email"}:
+        SendEmailFlow(initial_command=Query)
+        return True
+
     SetAssistantStatus("Thinking ... ") 
     Decision = FirstLayerDMM(Query)
+    # --- Handle send-email tasks produced by the decision model ---
+    # Example DMM outputs:
+    #   - send email to john@x.com about meeting tomorrow
+    #   - send email to a@b.com subject report body please send the report
+    email_tasks = [t for t in Decision if t.strip().startswith("send email")]
+    if email_tasks:
+        for t in email_tasks:
+            SendEmailFlow(initial_command=t)
+
     print("")
     print(f"Decision : {Decision}") 
     print("")
@@ -95,11 +225,11 @@ def MainExecution():
         if "generate" in queries:
             ImageGenerationQuery= str(queries) 
             ImageExecution = True
-    for queries in Decision:
-        if TaskExecution == False:
-            if any (queries.startswith(func) for func in Functions):
-                run(Automation(list(Decision))) 
-                TaskExecution = True
+    # Only pass executable automation tasks to Automation() to avoid noisy "No Function Found" logs.
+    automation_tasks = [q for q in Decision if any(q.startswith(func) for func in Functions)]
+    if automation_tasks and TaskExecution is False:
+        run(Automation(automation_tasks))
+        TaskExecution = True
     if ImageExecution == True:
         prompt = ImageGenerationQuery.removeprefix("generate image").strip().strip(".")
         with open(r"Frontend\Files\ImageGeneration.data", "w", encoding="utf-8") as file:

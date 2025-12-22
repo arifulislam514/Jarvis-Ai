@@ -78,5 +78,269 @@
     {
         "role": "assistant",
         "content": "Erica is a given name."
+    },
+    {
+        "role": "user",
+        "content": "Hello."
+    },
+    {
+        "role": "assistant",
+        "content": "It's nice to meet you."
+    },
+    {
+        "role": "user",
+        "content": "Hello."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello back to you."
+    },
+    {
+        "role": "user",
+        "content": "send email."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to send an email."
+    },
+    {
+        "role": "user",
+        "content": "Only been leaving that a little girl."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're referencing the song \"Only Been Giving a Little Girl\" is not correct, I think you probably mean \"Only Been Giving a Little Bit\" but I couldn't find any popular song with this title that is well known"
+    },
+    {
+        "role": "user",
+        "content": "Send a greeting email."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to send a greeting email."
+    },
+    {
+        "role": "user",
+        "content": "nice i could have been doing nothing."
+    },
+    {
+        "role": "assistant",
+        "content": "A relaxing statement."
+    },
+    {
+        "role": "user",
+        "content": "Just finding."
+    },
+    {
+        "role": "assistant",
+        "content": "You're searching for something."
+    },
+    {
+        "role": "user",
+        "content": "ay, Bye!"
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye!"
+    },
+    {
+        "role": "user",
+        "content": "I'm fixing it and they got another thing that i have nothing."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're saying you're trying to fix something, but you have nothing to do with what they have."
+    },
+    {
+        "role": "user",
+        "content": "Okay moving at me now."
+    },
+    {
+        "role": "assistant",
+        "content": "It seems like you're saying that things are getting in motion or action is being taken towards you."
+    },
+    {
+        "role": "user",
+        "content": "car model."
+    },
+    {
+        "role": "assistant",
+        "content": "A specific type of vehicle."
+    },
+    {
+        "role": "user",
+        "content": "Has a bag."
+    },
+    {
+        "role": "assistant",
+        "content": "Someone has a bag with them."
+    },
+    {
+        "role": "user",
+        "content": "ay, Bye!"
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye!"
+    },
+    {
+        "role": "user",
+        "content": "hello."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello again."
+    },
+    {
+        "role": "user",
+        "content": "send a reading email."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to send a reading email, likely a message related to something being read."
+    },
+    {
+        "role": "user",
+        "content": "fantastic email."
+    },
+    {
+        "role": "assistant",
+        "content": "You're writing a fantastic email."
+    },
+    {
+        "role": "user",
+        "content": "ay, Bye!"
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye!"
+    },
+    {
+        "role": "user",
+        "content": "online lalala hello."
+    },
+    {
+        "role": "assistant",
+        "content": "Hello, you're greeting me online."
+    },
+    {
+        "role": "user",
+        "content": "next next 1:30."
+    },
+    {
+        "role": "assistant",
+        "content": "You're looking ahead to the next event or time, which is 1:30."
+    },
+    {
+        "role": "user",
+        "content": "Hi ciel."
+    },
+    {
+        "role": "assistant",
+        "content": "Hi Sir, I'm Ciel."
+    },
+    {
+        "role": "user",
+        "content": "definitely that you need to."
+    },
+    {
+        "role": "assistant",
+        "content": "You're making a statement about something that is definitely necessary."
+    },
+    {
+        "role": "user",
+        "content": "Do you know my name?"
+    },
+    {
+        "role": "assistant",
+        "content": "You called me Ciel earlier, and I'm responding to you as Sir."
+    },
+    {
+        "role": "user",
+        "content": "what is my name?"
+    },
+    {
+        "role": "assistant",
+        "content": "You didn't mention your name earlier."
+    },
+    {
+        "role": "user",
+        "content": "save my name as a iphone."
+    },
+    {
+        "role": "assistant",
+        "content": "You want me to save your name, but you didn't tell me what it is."
+    },
+    {
+        "role": "user",
+        "content": "My name is ariful?"
+    },
+    {
+        "role": "assistant",
+        "content": "I've saved your name as Ariful."
+    },
+    {
+        "role": "user",
+        "content": "10 + 10."
+    },
+    {
+        "role": "assistant",
+        "content": "The answer is 20."
+    },
+    {
+        "role": "user",
+        "content": "send message."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to send a message."
+    },
+    {
+        "role": "user",
+        "content": "yeah i want to send message on whatsapp."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to send a WhatsApp message."
+    },
+    {
+        "role": "user",
+        "content": "together."
+    },
+    {
+        "role": "assistant",
+        "content": "You want to be or act together with someone."
+    },
+    {
+        "role": "user",
+        "content": "Exactly the game never good."
+    },
+    {
+        "role": "assistant",
+        "content": "You're making a statement about a game that's never good."
+    },
+    {
+        "role": "user",
+        "content": "I didn't answer please."
+    },
+    {
+        "role": "assistant",
+        "content": "You're saying you didn't answer a question or challenge."
+    },
+    {
+        "role": "user",
+        "content": "automobile."
+    },
+    {
+        "role": "assistant",
+        "content": "A vehicle, specifically a car."
+    },
+    {
+        "role": "user",
+        "content": "ay, Bye!"
+    },
+    {
+        "role": "assistant",
+        "content": "Goodbye!"
     }
 ]
