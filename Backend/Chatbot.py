@@ -2,6 +2,7 @@ from groq import Groq #Importing the Groq library to use its API.
 from json import load, dump # Importing functions to read and write JSON files.
 import datetime # Importing the datetime module for real-time date and time information.
 from dotenv import dotenv_values # Importing dotenv_values to read environment variables from a .env file.
+import os
 
 # Load environment variables from the .env file.
 env_vars=dotenv_values(".env")
@@ -13,6 +14,9 @@ GroqAPIKey = env_vars.get("GroqAPIKey")
 
 #Initialize the Groq client using the provided API key.
 client = Groq(api_key=GroqAPIKey)
+
+# Path to chat log
+CHATLOG_PATH = os.path.join("Data", "ChatLog.json")
 
 # Initialize an empty list to store chat messages.
 messages = []
@@ -31,11 +35,11 @@ SystemChatBot = [
 
 # Attempt to load the chat log from a JSON file.
 try:
-    with open(r"Data\ChatLog.json", "r") as f:
+    with open(CHATLOG_PATH, "r") as f:
         messages = load(f) # Load existing messages from the chat log. 
 except FileNotFoundError:
     # If the file doesn't exist, create an empty JSON file to store chat logs. 
-    with open(r"Data\ChatLog.json", "w") as f:
+    with open(CHATLOG_PATH, "w") as f:
         dump([], f)
         
 
@@ -68,7 +72,7 @@ def ChatBot (Query):
     """ This function sends the user's query to the chatbot and returns the AI's response."""
     try:
         # Load the existing chat log from the JSON file.
-        with open(r"Data\ChatLog.json", "r") as f:
+        with open(CHATLOG_PATH, "r") as f:
             messages = load(f)
             
         # Append the user's query to the messages list.
@@ -98,7 +102,7 @@ def ChatBot (Query):
         messages.append({"role": "assistant", "content": Answer})
         
         # Save the updated chat log to the JSON file.
-        with open(r"Data\ChatLog.json", "w") as f:
+        with open(CHATLOG_PATH, "w") as f:
             dump(messages, f, indent=4)
             
         #Return the formatted response.
@@ -106,7 +110,7 @@ def ChatBot (Query):
     
     except Exception as e:
         print(f"Error: {e}")
-        with open(r"Data\ChatLog.json", "w") as f:
+        with open(CHATLOG_PATH, "w") as f:
             dump([], f, indent=4)
         return "An error occurred. Chat log was reset, please try again."
 # Main program entry point.

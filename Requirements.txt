@@ -1,9 +1,11 @@
 python-dotenv
+eel
 groq
 AppOpener
 pywhatkit
 bS4
 pillow
+huggingface_hub
 rich
 requests
 Keyboard

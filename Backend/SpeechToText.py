@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from dotenv import dotenv_values
 import os
+from pathlib import Path
 import mtranslate as mt
 
 #Load environment variables from the .env file.
@@ -53,15 +54,16 @@ HtmlCode = '''<!DOCTYPE html>
 #Replace the language setting in the HTML code with the input language from the environment variables.
 HtmlCode= str(HtmlCode).replace("recognition.lang = '';", "recognition.lang = '{InputLanguage}';")
 
-#Write the modified HTML code to a file.
-with open(r"Data\Voice.html", "w") as f:
-    f.write(HtmlCode)
-
 #Get the current working directory.
 current_dir = os.getcwd()
-# Generate the file path for the HTML file.
-Link = f"{current_dir}/Data/Voice.html"
 
+# Write the modified HTML code to a file (cross-platform path).
+VOICE_HTML_PATH = Path(current_dir) / "Data" / "Voice.html"
+VOICE_HTML_PATH.parent.mkdir(parents=True, exist_ok=True)
+VOICE_HTML_PATH.write_text(HtmlCode, encoding="utf-8")
+
+# File URI used by Selenium.
+Link = VOICE_HTML_PATH.resolve().as_uri()
 #Set Chrome options for the WebDriver.
 chrome_options= Options()
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.142.86 Safari/537.36"
@@ -74,7 +76,7 @@ service = Service (ChromeDriverManager().install())
 driver = webdriver.Chrome (service=service, options=chrome_options)
 
 # Define the path for temporary files.
-TempDirPath = rf"{current_dir}/Frontend/Files"
+TempDirPath = os.path.join(current_dir, "Frontend", "Files")
 
 #Function to set the assistant's status by writing it to a file.
 def SetAssistantStatus (Status):
@@ -110,7 +112,7 @@ def UniversalTranslator(Text):
 #Function to perform speech recognition useing the webdriver.
 def SpeechRecognition():
     #open the HTML file in the browser.
-    driver.get("file:///" + Link)
+    driver.get(Link)
     #Start speech recognition by clicking the start button.
     driver.find_element(by=By.ID, value="start").click()
     

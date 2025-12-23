@@ -18,6 +18,7 @@ from email.message import EmailMessage
 
 #Load environment variables from the .env file.
 env_vars= dotenv_values(".env")
+Username = env_vars.get("Username") or env_vars.get("username") or "User"
 GroqAPIKey = env_vars.get("GroqAPIKey") # Retrieve the Groq API key.
 
 # Define CSS classes for parsing specific elements in HTML content.
@@ -43,7 +44,7 @@ professional_responses = [
 messages = []
 
 # System message to provide context to the chatbot.
-SystemChatBot = [{"role": "system", "content": f"Hello, I am {os.environ['username']}, You're a content writer. You have to write content like letters, codes, applications, essays, poems etc."}]
+SystemChatBot = [{"role": "system", "content": f"Hello, I am {Username}, You're a content writer. You have to write content like letters, codes, applications, essays, poems etc."}]
 
 #Function to perform a Google search. 
 def GoogleSearch(Topic):
@@ -94,14 +95,14 @@ def Content (Topic):
     
     Topic: str = Topic.replace("Content", "") # Remove "Content" from the topic. 
     ContentByAI = ContentWriterAI (Topic) # Generate content using AI.
-    
+
     # Save the generated content to a text file.
-    with open(rf"Data\{Topic.lower().replace(' ','')}.txt", "w", encoding="utf-8") as file: 
-        file.write(ContentByAI) # Write the content to the file.
-        file.close()
-        
-    OpenNotepad(rf"Data\{Topic.lower().replace(' ', '')}.txt") # Open the file in Notepad. 
-    return True #Indicate success.
+    filename = os.path.join("Data", f"{Topic.lower().replace(' ', '')}.txt")
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(ContentByAI)
+
+    OpenNotepad(filename)  # Open the file in Notepad.
+    return True  # Indicate success.
 
 # sending email function
 def SendEmailSMTP(to_email: str, subject: str, body: str, cc: str = "", bcc: str = ""):

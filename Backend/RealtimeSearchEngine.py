@@ -6,6 +6,7 @@ from dotenv import dotenv_values #Importing dotenv values to read environment va
 from groq import APIError
 import time
 import re
+import os
 
 # Load environment variables from the .env file.
 env_vars = dotenv_values(".env")
@@ -18,6 +19,8 @@ GroqAPIKey = env_vars.get("GroqAPIKey")
 # Initialize the Groq client with the provided API key. Groq(api_key-GroqAPIKey)
 client = Groq(api_key=GroqAPIKey)
 
+CHATLOG_PATH = os.path.join("Data", "ChatLog.json")
+
 # Define the system instructions for the chatbot.
 System = f"""Hello, I am {Username}, You are a very accurate and advanced AI chatbot named {Assistantname} which has real-time up-to-date information from the internet.
 *** Provide Answers In a Professional Way, make sure to add full stops, commas, question marks, and use proper grammar.***
@@ -25,10 +28,10 @@ System = f"""Hello, I am {Username}, You are a very accurate and advanced AI cha
 
 #Try to load the chat log from a JSON file, or create an empty one if it doesn't exist.
 try:
-    with open(r"Data\ChatLog.json", "r") as f:
+    with open(CHATLOG_PATH, "r") as f:
         messages = load(f)
 except:
-    with open(r"Data\ChatLog.json", "w") as f:
+    with open(CHATLOG_PATH, "w") as f:
         dump([], f)
     
 # Function to perform a Google search and format the results.
@@ -80,7 +83,7 @@ def RealtimeSearchEngine(prompt):
     global SystemChatBot, messages
     
     #Load the chat log from the JSON file.
-    with open(r"Data\ChatLog.json", "r") as f:
+    with open(CHATLOG_PATH, "r") as f:
         messages = load(f)
     messages.append({"role": "user", "content": f"{prompt}"})
     
@@ -124,7 +127,7 @@ def RealtimeSearchEngine(prompt):
     messages.append({"role": "assistant", "content": Answer})
 
     # Save the updated chat log back to the JSON file.
-    with open(r"Data\ChatLog.json", "w") as f:
+    with open(CHATLOG_PATH, "w") as f:
         dump(messages, f, indent=4)
             
     # Remove the most recent system message from the chatbot conversation.
