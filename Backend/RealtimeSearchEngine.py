@@ -7,6 +7,7 @@ from groq import APIError
 import time
 import re
 import os
+from Backend.RealtimeAPIs import try_handle_realtime
 
 # Load environment variables from the .env file.
 env_vars = dotenv_values(".env")
@@ -75,12 +76,24 @@ def Information():
     data += f"Date: {date}\n"
     data += f"Month: {month}\n"
     data += f"Year: {year}\n"
-    data += f"Time: {hour} hours, {minute} minutes, (second) seconds.\n"
+    data += f"Time: {hour} hours, {minute} minutes, {second} seconds.\n"
     return data
     
 #Function to handle real-time search and response generation.
 def RealtimeSearchEngine(prompt):
     global SystemChatBot, messages
+    
+    # 1) Try accuracy-sensitive handlers FIRST (no LLM, no Google snippets)
+    tool_answer = try_handle_realtime(prompt)
+    if tool_answer:
+        # Persist to chat log so the UI history stays consistent
+        with open(CHATLOG_PATH, "r") as f:
+            messages = load(f)
+        messages.append({"role": "user", "content": f"{prompt}"})
+        messages.append({"role": "assistant", "content": tool_answer})
+        with open(CHATLOG_PATH, "w") as f:
+            dump(messages, f, indent=4)
+        return AnswerModifier(tool_answer)
     
     #Load the chat log from the JSON file.
     with open(CHATLOG_PATH, "r") as f:

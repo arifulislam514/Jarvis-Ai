@@ -434,6 +434,21 @@ def _process_query(query: str) -> None:
         return
 
     _ui_status("Thinking ...")
+    
+    # ------------------------
+    # Accuracy-sensitive real-time tools (currency / weather)
+    # ------------------------
+    # This runs BEFORE the decision model so that queries like "USD to BDT"
+    # don't accidentally get routed to the general chatbot.
+    try:
+        from Backend.RealtimeAPIs import try_handle_realtime
+        tool_ans = try_handle_realtime(query)
+        if tool_ans:
+            _assistant_say(AnswerModifier(tool_ans), speak=True)
+            return
+    except Exception:
+        # If the API call fails, just continue with normal routing.
+        pass
 
     # ------------------------
     # Decision model routing
