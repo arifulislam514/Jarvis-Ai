@@ -88,7 +88,7 @@ async def generate_images(prompt: str) -> bool:
 
     os.makedirs(DATA_FOLDER, exist_ok=True)
 
-    for _ in range(2):
+    for _ in range(2):  # Generate 2 images
         full_prompt = (
             f"{prompt}, quality 4K, sharpness maximum, Ultra High details, high resolution, "
             f"seed {randint(0, 1_000_000)}"

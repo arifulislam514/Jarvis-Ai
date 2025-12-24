@@ -128,6 +128,8 @@ ChatHistory = [
     {"role": "Chatbot", "message": "open chrome, send email to a@b.com subject report body send the latest report"},
     {"role": "User", "message": "email john@x.com and mary@y.com subject meeting body tomorrow 9am"},
     {"role": "Chatbot", "message": "send email to john@x.com;mary@y.com subject meeting body tomorrow 9am"},
+    {"role": "User", "message": "show me a supercar image"},
+    {"role": "Chatbot", "message": "generate image supercar"},
 ]
 
 EMAIL_PREAMBLE = """

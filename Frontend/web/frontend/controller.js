@@ -2,9 +2,19 @@ $(document).ready(function () {
   // Display Speak Message
   eel.expose(DisplayMessage);
   function DisplayMessage(message) {
-    $(".siri-message li:first").text(message);
-    $(".siri-message").textillate("start");
+  try {
+    // Your HTML has <p class="siri-message"> ... </p> (not a <li> inside it)
+    $(".siri-message").text(message);
+
+    // Only call textillate if the plugin actually loaded
+    if ($.fn && typeof $.fn.textillate === "function") {
+      $(".siri-message").textillate("start");
+    }
+  } catch (e) {
+    console.log("DisplayMessage error:", e);
+    // Never throw — otherwise Eel returns status:"error"
   }
+}
 
   eel.expose(ShowHood);
   function ShowHood() {

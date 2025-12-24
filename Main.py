@@ -346,20 +346,26 @@ def SendEmailFlow(initial_command: str = "") -> bool:
 
 def _run_image_generation(prompt: str) -> None:
     os.makedirs(FRONTEND_FILES_DIR, exist_ok=True)
+
     with open(IMAGE_GEN_FILE, "w", encoding="utf-8") as f:
         f.write(f"{prompt},True")
 
+    script_path = os.path.join(BASE_DIR, "Backend", "ImageGeneration.py")
+    if not os.path.exists(script_path):
+        _ui_assistant(f"Image generator not found: {script_path}")
+        return
+
     try:
         p = subprocess.Popen(
-            [sys.executable, os.path.join("Backend", "ImageGeneration.py")],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
+            [sys.executable, script_path],
+            cwd=BASE_DIR,          # important on Windows
             shell=False,
         )
         _SUBPROCESSES.append(p)
+        print("IMAGE: started process PID =", p.pid)
     except Exception as e:
         _ui_assistant(f"Error starting image generation: {e}")
+        print("IMAGE ERROR:", repr(e))
 
 
 def _process_query(query: str) -> None:
@@ -390,6 +396,20 @@ def _process_query(query: str) -> None:
     # Email commands: handle even if the decision model isn't available.
     if q_norm.startswith("send email") or q_norm.startswith("email "):
         SendEmailFlow(initial_command=query)
+        return
+
+    # Image requests like: "supercar image", "car photo", "generate a picture of a tiger"
+    if re.search(r"\b(image|photo|picture|wallpaper)\b", q_norm) and not q_norm.startswith("generate image"):
+        # remove common filler words to form a clean prompt
+        prompt = re.sub(r"\b(show me|give me|generate|create|make|an|a|the|of|please)\b", "", q_norm)
+        prompt = re.sub(r"\b(image|photo|picture|wallpaper)\b", "", prompt).strip()
+
+        if prompt:
+            _ui_status("Generating image...")
+            _assistant_say("Generating the image.", speak=True)
+            _run_image_generation(prompt)
+        else:
+            _assistant_say("Please tell me what image you want me to generate.", speak=True)
         return
 
     # Image generation commands
@@ -430,6 +450,12 @@ def _process_query(query: str) -> None:
     except Exception as e:
         dmm_error = e
         decision = []
+
+    print("\n=== DEBUG: DMM ===")
+    print("q_norm:", repr(q_norm))
+    print("dmm_error:", repr(dmm_error))
+    print("decision:", decision)
+    print("=== /DEBUG ===\n")
 
     # ------------------------
     # If DMM is missing, do a lightweight heuristic routing
@@ -502,6 +528,7 @@ def _process_query(query: str) -> None:
             SendEmailFlow(initial_command=t)
 
     # Trigger image generation tasks
+    did_generate_image = False
     for t in decision:
         if t.startswith("generate image"):
             prompt = t.removeprefix("generate image").strip().strip(".")
@@ -509,6 +536,7 @@ def _process_query(query: str) -> None:
                 _ui_status("Generating image...")
                 _assistant_say("Generating the image.", speak=True)
                 _run_image_generation(prompt)
+                did_generate_image = True
 
     # Run automation tasks
     automation_tasks = [t for t in decision if any(t.startswith(p) for p in AUTOMATION_PREFIXES)]
@@ -518,6 +546,22 @@ def _process_query(query: str) -> None:
             asyncio_run(Automation(automation_tasks))
         except Exception as e:
             _ui_assistant(f"Automation error: {e}")
+
+    # IMPORTANT: If this was an image-only request, do NOT also produce a chatbot answer.
+    # (This prevents responses like "I'm a text-based AI, I can't display images..." after
+    # the image has already been generated.)
+    if did_generate_image:
+        wants_text_too = bool(
+            re.search(
+                r"\b(tell\s+me|describe|explain|about|details|information|specs?|history|compare)\b",
+                q_norm,
+            )
+        )
+        if not wants_text_too:
+            # If we only did tasks (image/automation/email), we're done.
+            if automation_tasks or email_tasks:
+                _assistant_say("Done.", speak=True)
+            return
 
     # Answering logic (general / realtime)
     G = any(t.startswith("general") for t in decision)
@@ -661,6 +705,10 @@ def takeAllCommands(message: Optional[str] = None) -> bool:
         if not query:
             _ui_idle()
             return True
+
+        print("\n=== DEBUG: takeAllCommands ===")
+        print("QUERY_FROM_UI:", repr(query))
+        print("=== /DEBUG ===\n")
 
         _ui_user(query)
         _process_query(query)
